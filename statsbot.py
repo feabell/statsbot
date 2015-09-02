@@ -7,9 +7,12 @@ import zkbapi
 outputs = []
 
 def process_message(data):
+	#stop the bot from barfing out for events without a text chunk (event_ts chunks happen with unfurled links)
+	if not 'text' in data:
+		return
+
 	channel = data["channel"]
     	text = data["text"]
-
 	print data
 
 	#if channel.startswith("D"): # or channel.startswith("C"):
