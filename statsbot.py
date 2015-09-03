@@ -10,7 +10,7 @@ crontable = []
 #poll for new kills every 10minutes
 crontable.append([600, "autokill"])
 
-testingChanId = "C04N5P17B"
+killChannelId = "C04MCGR8Y"
 
 def process_message(data):
 	#stop the bot from barfing out for events without a text chunk (event_ts chunks happen with unfurled links)
@@ -64,7 +64,7 @@ def autokill():
 
 		for kill in kills:
 			killIdInt = str(kill['killID'])
-			outputs.append([testingChanId, zkbapi.parseKill(kill)])
+			outputs.append([killChannelId, zkbapi.parseKill(kill)])
 			print "autokill: updating latest kill to " + killIdInt
 
 			cur.execute('update lastkillid set id = '+killIdInt)
