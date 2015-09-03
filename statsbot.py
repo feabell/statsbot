@@ -1,10 +1,16 @@
-import os, threading, sys
+import os, threading, sys, sqlite3
 
 import eveapi
 import zkbapi
 #import slackapi
 
 outputs = []
+crontable = []
+
+#poll for new kills every 10minutes
+crontable.append([600, "autokill"])
+
+testingChanId = "C04N5P17B"
 
 def process_message(data):
 	#stop the bot from barfing out for events without a text chunk (event_ts chunks happen with unfurled links)
@@ -41,6 +47,28 @@ def process_message(data):
 			outputs.append([channel, zkbapi.getLastKill()])	
 		elif command.startswith("xxxxeeee"):
 			outputs.append([channel, zkbapi.getLastKill()])	
-		
+
+
+def autokill():
+	print "autokill: polling for new kills"
+	#grab the lastKillId from sqlite
+	dir_path = os.path.dirname(os.path.abspath(__file__))
+	con = sqlite3.connect(os.path.join(dir_path, 'statsbot.db'))
+
+	with con:
+		cur = con.cursor()
+		cur.execute('select id from lastkillid')
+
+		lastKillId = str(cur.fetchone()[0])
+		kills = zkbapi.getNewKills(lastKillId)
+
+		for kill in kills:
+			killIdInt = str(kill['killID'])
+			outputs.append([testingChanId, zkbapi.parseKill(kill)])
+			print "autokill: updating latest kill to " + killIdInt
+
+			cur.execute('update lastkillid set id = '+killIdInt)
+			con.commit()
+
 
 
