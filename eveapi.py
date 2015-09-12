@@ -5,14 +5,18 @@ import json
 
 def getSystem(systemID):
 	url = "https://public-crest.eveonline.com/solarsystems/"+systemID+"/"
+	
+	name = ''
+	with requests.get(url).text as getdata:
+		name = json.loads(getdata)['name']
 
-	j = json.loads(requests.get(url).text)
-
-	return j['name']
+	return name
 
 def getShip(shipID):
 	url = "https://public-crest.eveonline.com/types/"+shipID+"/"
 
-	j = json.loads(requests.get(url).text)
-	
-	return j['name']
+	name = ''
+	with requests.get(url).text as getdata:
+		name = json.loads(getdata)['name']
+
+	return name

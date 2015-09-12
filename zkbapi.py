@@ -14,7 +14,8 @@ def getNewKills(lastKillId):
 	global headers
 	url = 'https://zkillboard.com/api/kills/corporationID/98330748/no-items/afterKillID/' + lastKillId + '/orderDirection/asc/';
 
-	return json.loads(requests.get(url, headers=headers).text)
+	with requests.get(url, headers=headers).text as getdata
+		return json.loads(getdata)
 
 def parseKill(kill):
 	killIdInt = kill['killID']
@@ -55,15 +56,18 @@ def getLastKill():
 	rnd = str(randint(0,9)) 
 	url = 'https://zkillboard.com/api/kills/corporationID/98330748/limit/'+rnd+'/no-items/'
 
-	j = json.loads(requests.get(url, headers=headers).text)
-
-	blob = j[0]
-	killidint = blob['killID']
-	if (killidint > killid):
-		killid = killidint
-		toSlack = parseKill(blob)
+	toSlack = ''
 	
-	print "lastkill: responded for killid " + killidint
+	with requests.get(url, headers=headers).text as getdata:
+		j = json.loads(getdata)
+
+		blob = j[0]
+		killidint = blob['killID']
+		if (killidint > killid):
+			killid = killidint
+			toSlack = parseKill(blob)
+	
+		print "lastkill: responded for killid " + killidint
 
 	return toSlack
 
