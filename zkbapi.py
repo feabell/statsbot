@@ -12,13 +12,16 @@ headers = {'user-agent': 'WiNGSPAN Slack webhook (all kill tracker 10min poll) f
 
 def getNewKills(lastKillId):
 	global headers
+	data = ""
 	url = 'https://zkillboard.com/api/kills/corporationID/98330748/no-items/afterKillID/' + lastKillId + '/orderDirection/asc/';
 
 	try:
-		getdata = requests.get(url, headers=headers).text
-		return json.loads(getdata)
+		data = json.loads(requests.get(url, headers=headers).text)
 	except:
 		print "could not connect to zkb"
+
+	return data
+		
 
 def parseKill(kill):
 	killIdInt = kill['killID']
