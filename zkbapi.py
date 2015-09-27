@@ -8,12 +8,13 @@ import eveapi
 
 toSlack = ""
 killid = 0
+allianceId = "99005770"
 headers = {'user-agent': 'WiNGSPAN Slack webhook (all kill tracker 10min poll) feabell@gmail.com'}
 
 def getNewKills(lastKillId):
 	global headers
 	data = ""
-	url = 'https://zkillboard.com/api/kills/corporationID/98330748/no-items/afterKillID/' + lastKillId + '/orderDirection/asc/';
+	url = 'https://zkillboard.com/api/kills/alliance/' + allianceId +  '/no-items/afterKillID/' + lastKillId + '/orderDirection/asc/';
 
 	try:
 		data = json.loads(requests.get(url, headers=headers).text)
@@ -60,7 +61,7 @@ def getLastKill():
 	print "lastkill: request received"
 
 	rnd = str(randint(0,9)) 
-	url = 'https://zkillboard.com/api/kills/corporationID/98330748/limit/'+rnd+'/no-items/'
+	url = 'https://zkillboard.com/api/kills/alliance/' + allianceId + '/limit/'+rnd+'/no-items/'
 
 	toSlack = ''
 	
