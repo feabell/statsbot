@@ -18,6 +18,7 @@ def process_message(data):
 		return
 
 	channel = data["channel"]
+	user = data["user"]
     	text = data["text"]
 	print data
 
@@ -35,8 +36,8 @@ def process_message(data):
 			outputs.append([channel, "help messages goes here"])
 		elif command.startswith("lastkill"):
 			outputs.append([channel, zkbapi.getLastKill()])	
-		elif command.startswith("xxxxaaaa"):
-			outputs.append([channel, zkbapi.getLastKill()])	
+		elif command.startswith("events"):
+			outputs.append([channel, eveapi.getEvents()])	
 		elif command.startswith("xxxxbbbb"):
 			outputs.append([channel, zkbapi.getLastKill()])	
 		elif command.startswith("xxxxvvvv"):
