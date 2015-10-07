@@ -2,7 +2,15 @@ import os, threading, sys, sqlite3
 
 import eveapi
 import zkbapi
-#import slackapi
+import fleetapi
+import slackapi
+import yaml
+import os
+
+config = yaml.load(file('plugins/stats/statsbot.conf', 'r'))
+token = config["SLACK_TOKEN"]
+
+api_client = slackapi.init(token)
 
 outputs = []
 crontable = []
@@ -38,8 +46,16 @@ def process_message(data):
 			outputs.append([channel, zkbapi.getLastKill()])	
 		elif command.startswith("events"):
 			outputs.append([channel, eveapi.getEvents()])	
-		elif command.startswith("xxxxbbbb"):
-			outputs.append([channel, zkbapi.getLastKill()])	
+		elif command.startswith("fleet"):
+			if not channel.startswith("D"):
+				outputs.append([channel, "This command cannot be ran in this channel"])
+				return
+
+			subcomm = blob[2]
+			if subcomm.startswith("new"):
+				#grab the description by compounding together all entries after 2
+				description = ' '.join(blob[3:])
+				outputs.append([channel, fleetapi.newFleet(slackapi.getFullname(user), description)])	
 		elif command.startswith("xxxxvvvv"):
 			outputs.append([channel, zkbapi.getLastKill()])	
 		elif command.startswith("xxxxzzzz"):
