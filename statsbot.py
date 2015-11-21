@@ -56,8 +56,8 @@ def process_message(data):
 				#grab the description by compounding together all entries after 2
 				description = ' '.join(blob[3:])
 				outputs.append([channel, fleetapi.newFleet(slackapi.getFullname(user), description)])	
-		elif command.startswith("xxxxvvvv"):
-			outputs.append([channel, zkbapi.getLastKill()])	
+		elif command.startswith("testme"):
+			slackapi.sendMessage()
 		elif command.startswith("xxxxzzzz"):
 			outputs.append([channel, zkbapi.getLastKill()])	
 		elif command.startswith("xxxxdddd"):
