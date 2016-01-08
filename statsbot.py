@@ -41,11 +41,15 @@ def process_message(data):
 		command = blob[1]
 		
 		if command.startswith("help"):
-			outputs.append([channel, "help messages goes here"])
+			outputs.append([channel, "!sb lastkill || shows the lastkill reported in #kills\r\n"+
+						 "!sb events || list events on the WDS in-game calendar\r\n"+
+						 "!sb srp || view the current status of the WDS SRP wallet"])
 		elif command.startswith("lastkill"):
 			outputs.append([channel, zkbapi.getLastKill()])	
 		elif command.startswith("events"):
 			outputs.append([channel, eveapi.getEvents()])	
+		elif command.startswith("srp"):
+			outputs.append([channel, eveapi.getSRP()])	
 		elif command.startswith("fleet"):
 			if not channel.startswith("D"):
 				outputs.append([channel, "This command cannot be ran in this channel"])
