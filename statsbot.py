@@ -21,8 +21,12 @@ crontable.append([600, "autokill"])
 killChannelId = "C04MCGR8Y"
 
 def process_message(data):
-	#stop the bot from barfing out for events without a text chunk (event_ts chunks happen with unfurled links)
+	#stop the bot from barfing out for events without a text, channel  or user chunk (event_ts chunks happen with unfurled links)
 	if not 'text' in data:
+		return
+	if not 'user' in data:
+		return
+	if not 'channel' in data:
 		return
 
 	channel = data["channel"]
