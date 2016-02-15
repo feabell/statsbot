@@ -32,7 +32,7 @@ def getSystem(systemID):
 		blob = json.loads(requests.get(url).text)
 		name = blob['name']
 	except:
-		print "couldn't connect to crest"
+		print "couldn't connect to crest (system)"
 
 	return name
 
@@ -44,7 +44,7 @@ def getShip(shipID):
 		blob = json.loads(requests.get(url).text)
 		name = blob['name']
 	except:
-		print "couldn't connect to crest"
+		print "couldn't connect to crest (ship)"
 
 	return name
 
