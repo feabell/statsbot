@@ -12,5 +12,8 @@ def init(token):
 def getFullname(userid):
 	return  json.loads(api_client.api_call('users.info', user=userid))['user']['profile']['real_name']
 
+def sendRR(input):
+	api_client.api_call('chat.postMessage', channel='#rapid-response', text=input, as_user=True)
+
 def sendMessage():
 	api_client.api_call('chat.postMessage', channel='#Testing', text='<http://google.com|test>', as_user=True)

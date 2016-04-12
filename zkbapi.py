@@ -8,7 +8,7 @@ import eveapi
 
 toSlack = ""
 killid = 0
-allianceId = "99005770"
+allianceId = "99006319"
 headers = {'user-agent': 'WiNGSPAN Slack webhook (all kill tracker 10min poll) feabell@gmail.com'}
 
 def getNewKills(lastKillId):

@@ -6,6 +6,7 @@ import fleetapi
 import slackapi
 import yaml
 import os
+from time import gmtime, strftime
 
 config = yaml.load(file('plugins/stats/statsbot.conf', 'r'))
 token = config["SLACK_TOKEN"]
@@ -47,7 +48,8 @@ def process_message(data):
 		if command.startswith("help"):
 			outputs.append([channel, "!sb lastkill || shows the lastkill reported in #kills\r\n"+
 						 "!sb events || list events on the WDS in-game calendar\r\n"+
-						 "!sb srp || view the current status of the WDS SRP wallet"])
+						 "!sb srp || view the current status of the WDS SRP wallet"+
+						 "!sb rr <your message here> || post a request for a fleet or forump message to #rapid-response"])
 		elif command.startswith("lastkill"):
 			outputs.append([channel, zkbapi.getLastKill()])	
 		elif command.startswith("events"):
@@ -66,6 +68,17 @@ def process_message(data):
 				outputs.append([channel, fleetapi.newFleet(slackapi.getFullname(user), description)])	
 		elif command.startswith("testme"):
 			slackapi.sendMessage()
+		elif command.startswith("rr"):
+			if not channel.startswith("D"):
+				outputs.append([channel, "This command cannot be ran in this channel"])
+				return
+
+			username = slackapi.getFullname(user)
+			currtime = strftime('%H:%M %d-%m', gmtime())
+			rr = ' '.join(blob[2:])
+			message = 'Rapid Response by '+username+' at '+currtime+' (eve time):\r\n'+rr
+
+			slackapi.sendRR(message)
 		elif command.startswith("xxxxzzzz"):
 			outputs.append([channel, zkbapi.getLastKill()])	
 		elif command.startswith("xxxxdddd"):
