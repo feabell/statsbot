@@ -5,6 +5,8 @@ import requests
 import json
 import pprint
 import eveapi
+import logging
+import sys
 
 toSlack = ""
 killid = 0
@@ -72,8 +74,8 @@ def getLastKill():
 			killid = killidint
 			toSlack = parseKill(blob)
 	
-		logging.info("lastkill: responded for killid " + killidint)
-	except:
+		logging.info("lastkill: responded for killid " + str(killidint))
+	except Exception as e:
 		logging.info("could not connect to zkb")
 
 	return toSlack
