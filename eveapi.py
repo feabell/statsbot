@@ -18,7 +18,7 @@ def getKey(key):
     try:
     	apikey = config[key]
     except:
-	print "no key with name " +key
+	logging.info("no key with name " +key)
 
     os.chdir(prev_dir)
 
@@ -32,7 +32,7 @@ def getSystem(systemID):
 		blob = json.loads(requests.get(url).text)
 		name = blob['name']
 	except:
-		print "couldn't connect to crest (system)"
+		logging.info("couldn't connect to crest (system)")
 
 	return name
 
@@ -44,7 +44,7 @@ def getShip(shipID):
 		blob = json.loads(requests.get(url).text)
 		name = blob['name']
 	except:
-		print "couldn't connect to crest (ship)"
+		logging.info("couldn't connect to crest (ship)")
 
 	return name
 
@@ -75,7 +75,7 @@ def getEvents():
 			response += time.strftime('%A %b %d @%H:%M', date) + ': '  + title + " - " + text +'\r\n'
 
 	except:
-		print "barfed in XML api", sys.exc_info()[0]
+		logging.info("barfed in XML api", sys.exc_info()[0])
 	
 	return response
 			
@@ -111,7 +111,6 @@ def getSRP():
 			if(starting_balance == 0):
 				starting_balance = balance - amount
 				start_date = journal_entry.get('date')
-				print start_date
 			
 			if(amount > 0):
 				donations = donations + amount
@@ -121,7 +120,7 @@ def getSRP():
 			end_balance = balance
 
 	except:
-		print "barfed in XML api", sys.exc_info()[0]
+		logging.info("barfed in XML api", sys.exc_info()[0])
 
 	response += "SRP stats from " + start_date + " (last 30 days):\r\n"
 	response += "--------------------------------------------------\r\n"
@@ -130,5 +129,4 @@ def getSRP():
 	response += "Payouts: " + locale.format("%d", payouts/1000, grouping=True) + "mn/isk\r\n"
 	response += "Current balance: " + locale.format("%d", end_balance/1000, grouping=True) + "mn/isk\r\n"
 
-	print response
 	return response

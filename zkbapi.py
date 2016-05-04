@@ -19,7 +19,7 @@ def getNewKills(lastKillId):
 	try:
 		data = json.loads(requests.get(url, headers=headers).text)
 	except:
-		print "could not connect to zkb"
+		logging.info("could not connect to zkb")
 
 	return data
 		
@@ -58,8 +58,6 @@ def getLastKill():
 	global killid
 	global headers
 
-	print "lastkill: request received"
-
 	rnd = str(randint(0,9)) 
 	url = 'https://zkillboard.com/api/kills/alliance/' + allianceId + '/limit/'+rnd+'/no-items/'
 
@@ -74,9 +72,9 @@ def getLastKill():
 			killid = killidint
 			toSlack = parseKill(blob)
 	
-		print "lastkill: responded for killid " + killidint
+		logging.info("lastkill: responded for killid " + killidint)
 	except:
-		print "could not connect to zkb"
+		logging.info("could not connect to zkb")
 
 	return toSlack
 

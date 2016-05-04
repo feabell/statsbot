@@ -14,7 +14,7 @@ def newFleet(fcname, description):
 		jsondata = json.loads(requests.post(url, data=json.dumps(payload)).text)
 		r = "Fleet created! Participation URL: "+ jsondata['url']
 	except:
-		print "could not connect to skynet", sys.exc_info()[0]
+		logging.info("could not connect to skynet: " + sys.exc_info()[0])
 
 	return r
 
