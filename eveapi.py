@@ -8,6 +8,7 @@ import sys
 import yaml
 import os
 import locale
+import logging
 
 def getKey(key):
 
@@ -25,7 +26,7 @@ def getKey(key):
     return apikey
 
 def getSystem(systemID):
-	url = "https://public-crest.eveonline.com/solarsystems/"+systemID+"/"
+	url = "https://crest.eveonline.com/solarsystems/"+systemID+"/"
 	
 	name = ''
 	try:
@@ -37,7 +38,7 @@ def getSystem(systemID):
 	return name
 
 def getShip(shipID):
-	url = "https://public-crest.eveonline.com/types/"+shipID+"/"
+	url = "https://crest.eveonline.com/types/"+shipID+"/"
 
 	name = ''
 	try:
