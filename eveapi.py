@@ -38,7 +38,7 @@ def getSystem(systemID):
 	return name
 
 def getShip(shipID):
-	url = "https://crest.eveonline.com/types/"+shipID+"/"
+	url = "https://crest.eveonline.com/inventory/types/"+shipID+"/"
 
 	name = ''
 	try:
