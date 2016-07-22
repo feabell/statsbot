@@ -78,12 +78,14 @@ def process_message(data):
 				description = ' '.join(blob[3:])
 				outputs.append([channel, fleetapi.newFleet(username, description)])	
 		elif command.startswith("testme"):
-			logging.info('testme command received from ' + username)
-			slackapi.sendMessage()
+			logging.info('testme v2 command received from ' + username)
+			#slackapi.sendMessage()
+			#slackapi.sendPM("did this work?", user)
 		elif command.startswith("rr"):
 			logging.info('rr command received from ' + username)
 			if not channel.startswith("D"):
-				outputs.append([channel, "This command cannot be ran in this channel"])
+				slackapi.sendPM("You can't send rapid reponses from channels, try copying and pasting the message (starting '!sb rr...')  in here instead!",
+						user)
 				return
 
 			currtime = strftime('%H:%M %d-%m', gmtime())
