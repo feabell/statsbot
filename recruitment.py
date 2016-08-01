@@ -2,8 +2,8 @@ import sqlite3, pprint
 from time import strftime, gmtime
 import datetime
 
-database = '/home/feabell/services/agentapi.db'
-#database = '/var/www/agentapi/agentapi.db'
+#database = '/home/feabell/services/agentapi.db'
+database = '/var/www/agentapi/agentapi.db'
 
 def list(invited=False, inducted=False, rejected=False):
 
