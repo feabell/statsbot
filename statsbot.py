@@ -86,7 +86,7 @@ def process_message(data):
 			#slackapi.sendPM("did this work?", user)
 		elif command.startswith("recruit"):
 			logging.info('recruit command received from ' + username)
-			if not channel.startswith(testChannelId):
+			if not channel.startswith(recruitChannelId):
 				outputs.append([channel, "This command cannot be ran in this channel"])
 			subcomm = blob[2]
 
