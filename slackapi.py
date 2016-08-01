@@ -21,6 +21,8 @@ def sendRR(input):
 def sendPM(input, userid):
 	api_client.api_call('chat.postMessage', channel="@"+getUsername(userid), text=input, as_user=True)
 
+def sendToChannel(input, channel):
+	api_client.api_call('chat.postMessage', channel=channel, text=input, as_user=True)
 
 def sendMessage():
 	api_client.api_call('chat.postMessage', channel='#Testing', text='<http://google.com|test>', as_user=True)

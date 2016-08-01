@@ -4,6 +4,7 @@ import eveapi
 import zkbapi
 import fleetapi
 import slackapi
+import recruitment
 import yaml
 import os
 import logging
@@ -23,6 +24,8 @@ crontable = []
 crontable.append([600, "autokill"])
 
 killChannelId = "C04MCGR8Y"
+testChannelId = "C04N5P17B"
+recruitChannelId = "G04NGUDHF"
 
 logging.info('Statsbot started')
 
@@ -81,6 +84,38 @@ def process_message(data):
 			logging.info('testme v2 command received from ' + username)
 			#slackapi.sendMessage()
 			#slackapi.sendPM("did this work?", user)
+		elif command.startswith("recruit"):
+			logging.info('recruit command received from ' + username)
+			if not channel.startswith(testChannelId):
+				outputs.append([channel, "This command cannot be ran in this channel"])
+			subcomm = blob[2]
+
+			if subcomm.startswith("listrec"):
+				#list all waiting recruits
+				#outputs.append([channel, recruitment.list()])
+				slackapi.sendToChannel(recruitment.list(), channel)
+			elif subcomm.startswith("listinv"):
+				#list invited
+				slackapi.sendToChannel(recruitment.list(invited=True), channel)
+			elif subcomm.startswith("listind"):
+				#list invited
+				slackapi.sendToChannel(recruitment.list(inducted=True), channel)
+			elif subcomm.startswith("listrej"):
+				#list invited
+				slackapi.sendToChannel(recruitment.list(rejected=True), channel)
+			elif subcomm.startswith("induct"):
+				#mark selected recruits as inducted and needing an invite
+				recruitment.update(1, blob[3:], username)
+			elif subcomm.startswith("invite"):
+				#mark selected recruits as invited
+				recruitment.update(2, blob[3:], username)
+			elif subcomm.startswith("reject"):
+				#mark selected recruits as rejected
+				recruitment.update(3, blob[3:], username)
+			else:
+				outputs.append([channel, "Unknown command"])
+
+
 		elif command.startswith("rr"):
 			logging.info('rr command received from ' + username)
 			if not channel.startswith("D"):
