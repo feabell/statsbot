@@ -62,9 +62,11 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
       if record['lastagent']:
          output += ' | ' + record['lastagent']  
       if lastdate: 
-         output += ' - '+ lastdate.strftime("%d %b %H:%M") +' \r\n'
+         output += ' - '+ lastdate.strftime("%d %b %H:%M")
       if showfull:
          output += ' ``` '+record['blob']+' ``` \r\n'
+      else:
+         output +=' \r\n'
 
   return output
 
