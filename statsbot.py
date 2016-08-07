@@ -22,6 +22,8 @@ crontable = []
 
 #poll for new kills every 10minutes
 crontable.append([600, "autokill"])
+#poll for new recruits every 1minutes
+crontable.append([60, "autorec"])
 
 killChannelId = "C04MCGR8Y"
 testChannelId = "C04N5P17B"
@@ -86,23 +88,32 @@ def process_message(data):
 			#slackapi.sendPM("did this work?", user)
 		elif command.startswith("recruit"):
 			logging.info('recruit command received from ' + username)
-			if not channel.startswith(recruitChannelId):
+			if not (channel.startswith(recruitChannelId) or slackapi.userInChannel(recruitChannelId, user)):
 				outputs.append([channel, "This command cannot be ran in this channel"])
+				return
+
 			subcomm = blob[2]
 
-			if subcomm.startswith("listrec"):
-				#list all waiting recruits
-				#outputs.append([channel, recruitment.list()])
-				slackapi.sendToChannel(recruitment.list(), channel)
-			elif subcomm.startswith("listinv"):
-				#list invited
-				slackapi.sendToChannel(recruitment.list(invited=True), channel)
-			elif subcomm.startswith("listind"):
-				#list invited
-				slackapi.sendToChannel(recruitment.list(inducted=True), channel)
-			elif subcomm.startswith("listrej"):
-				#list invited
-				slackapi.sendToChannel(recruitment.list(rejected=True), channel)
+			if subcomm == "list":
+				targetcomm = blob[3]
+				showFull=False
+
+				if len(blob) >= 5: 
+				  if blob[4] == "full":
+					showFull=True
+				
+				if targetcomm == "recruits":
+					#list all waiting recruits
+					slackapi.sendToChannel(recruitment.list(recruits=True, showfull=showFull), channel)
+				elif targetcomm == "invited":
+					#list invited
+					slackapi.sendToChannel(recruitment.list(invited=True, showfull=showFull), channel)
+				elif targetcomm == "inducted":
+					#list invited
+					slackapi.sendToChannel(recruitment.list(inducted=True,  showfull=showFull), channel)
+				elif targetcomm == "rejected":
+					#list invited
+					slackapi.sendToChannel(recruitment.list(rejected=True, showfull=showFull), channel)
 			elif subcomm.startswith("induct"):
 				#mark selected recruits as inducted and needing an invite
 				recruitment.update(1, blob[3:], username)
@@ -148,6 +159,32 @@ def autokill():
 
 			cur.execute('update lastkillid set id = '+killIdInt)
 			con.commit()
+
+
+def autorec():
+	logging.info("autorec: polling for new recruits")
+	
+	dir_path = os.path.dirname(os.path.abspath(__file__))
+	con = sqlite3.connect(os.path.join(dir_path, 'statsbot.db'))
+
+	with con:
+		cur = con.cursor()
+		cur.execute('select id from lastrecruitid')
+
+		lastRecId = str(cur.fetchone()[0])
+		recruits = recruitment.getNew(lastRecId)
+
+		if len(recruits) >=1:
+  		  slackapi.sendToChannel("New recruits!", recruitChannelId)
+
+		  for recruit in recruits:
+			recIdInt = str(recruit['id'])
+			slackapi.sendToChannel(recruitment.list(recid=recIdInt), recruitChannelId)
+			logging.info("autorec: updating latest recruit to " + recIdInt)
+
+			cur.execute('update lastrecruitid set id = '+recIdInt)
+			con.commit()
+
 
 
 

@@ -5,7 +5,7 @@ import datetime
 #database = '/home/feabell/services/agentapi.db'
 database = '/var/www/agentapi/agentapi.db'
 
-def list(invited=False, inducted=False, rejected=False):
+def list(recruits=False, invited=False, inducted=False, rejected=False, showfull=False, recid=False):
 
   output = 'ID | Date Added | Pilot & Capability | Agent Last Edit & Date\r\n'
   
@@ -15,10 +15,19 @@ def list(invited=False, inducted=False, rejected=False):
     status =2
   elif inducted:
     status =1
+  elif recruits:
+    status =0
   else:
     status =0
-
-  results = query_db('SELECT id, '
+  
+  if recid:
+    results = query_db('SELECT id, '
+                       'name, keyid, vcode, dateadded, blob, sb, astero, '
+                       'strat, recon, t3, blops, '
+                       'lastagent, datelasttouch FROM recruits WHERE id=? '
+                       , [recid])
+  else:
+    results = query_db('SELECT id, '
                        'name, keyid, vcode, dateadded, blob, sb, astero, '
                        'strat, recon, t3, blops, '
                        'lastagent, datelasttouch FROM recruits WHERE status=? '
@@ -54,7 +63,8 @@ def list(invited=False, inducted=False, rejected=False):
          output += ' | ' + record['lastagent']  
       if lastdate: 
          output += ' - '+ lastdate.strftime("%d %b %H:%M")
-      output += ' ``` '+record['blob']+' ``` \r\n'
+      if showfull:
+         output += ' ``` '+record['blob']+' ``` \r\n'
 
   return output
 
@@ -63,12 +73,16 @@ def update(param, users, agent):
   recruits = ''.join(users).split(',')
 
   for recruit in recruits:
-	print(recruit)
 	update = insert_db('UPDATE recruits '
                            'SET status=?, lastagent=?,  datelasttouch=datetime() '
                            'WHERE id=?', [param, agent, recruit])
 
   return
+
+def getNew(recId):
+  return query_db('SELECT id '
+                  'FROM recruits WHERE id>?'
+                       , [recId])
 
 def query_db(query, args=(), one=False):
   """

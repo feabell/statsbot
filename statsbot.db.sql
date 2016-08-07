@@ -1,1 +1,2 @@
 CREATE TABLE lastkillid(id int PRIMARY KEY NOT NULL);
+CREATE TABLE lastrecruitid(id int PRIMARY KEY NOT NULL);

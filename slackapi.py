@@ -26,3 +26,13 @@ def sendToChannel(input, channel):
 
 def sendMessage():
 	api_client.api_call('chat.postMessage', channel='#Testing', text='<http://google.com|test>', as_user=True)
+
+def userInChannel(channel, user):
+	channelInfo = json.loads(api_client.api_call('groups.info', channel=channel))
+
+	if user in channelInfo['group']['members']:
+		return True
+
+	return False
+	
+	
