@@ -96,6 +96,7 @@ def process_message(data):
 
 			if subcomm == "help":
 				helptext = "!sb recruit list <recruits|invited|inducted|rejected> <full>\r\n" 
+				helptext+= "!sb recruit list <id> <full>\r\n"
 				helptext+= "!sb recruit <invite|induct|reject> <id>\r\n"
 				outputs.append([channel, helptext])
 				return
@@ -107,8 +108,10 @@ def process_message(data):
 				if len(blob) >= 5: 
 				  if blob[4] == "full":
 					showFull=True
-				
-				if targetcomm == "recruits":
+				if targetcomm.isdigit():
+					#list a specific recruit
+					slackapi.sendToChannel(recruitment.list(recid=targetcomm, showfull=showFull), channel)
+				elif targetcomm == "recruits":
 					#list all waiting recruits
 					slackapi.sendToChannel(recruitment.list(recruits=True, showfull=showFull), channel)
 				elif targetcomm == "invited":
@@ -123,12 +126,15 @@ def process_message(data):
 			elif subcomm.startswith("induct"):
 				#mark selected recruits as inducted and needing an invite
 				recruitment.update(1, blob[3:], username)
+				slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as inducted by ' + username, recruitChannelId)
 			elif subcomm.startswith("invite"):
 				#mark selected recruits as invited
 				recruitment.update(2, blob[3:], username)
+				slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as invited by ' + username, recruitChannelId)
 			elif subcomm.startswith("reject"):
 				#mark selected recruits as rejected
 				recruitment.update(3, blob[3:], username)
+				slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as rejected by ' + username, recruitChannelId)
 			else:
 				outputs.append([channel, "Unknown command"])
 
