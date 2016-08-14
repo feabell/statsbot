@@ -95,14 +95,19 @@ def process_message(data):
 			subcomm = blob[2]
 
 			if subcomm == "help":
-				helptext = "!sb recruit list <recruits|invited|inducted|rejected> <full>\r\n" 
+				helptext = "!sb recruit list\r\n"
+				helptext+= "!sb recruit list <recruits|invited|inducted|rejected> <full>\r\n" 
 				helptext+= "!sb recruit list <id> <full>\r\n"
 				helptext+= "!sb recruit <invite|induct|reject> <id>\r\n"
 				outputs.append([channel, helptext])
 				return
 
 			if subcomm == "list":
-				targetcomm = blob[3]
+				if len(blob) == 3:
+					targetcomm = "recruits"
+				else:
+					targetcomm = blob[3]
+
 				showFull=False
 
 				if len(blob) >= 5: 
