@@ -4,6 +4,9 @@ import datetime
 
 #database = '/home/feabell/services/agentapi.db'
 database = '/var/www/agentapi/agentapi.db'
+config = yaml.load(file('plugins/stats/statsbot.conf', 'r'))
+token = config["API_BASE_URL"]
+
 
 def list(recruits=False, invited=False, inducted=False, rejected=False, showfull=False, recid=False):
 
@@ -55,7 +58,7 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
 
       output += '>' + str(record['id']).center(6) + '| ' 
       output +=  date.strftime("%d %b %H:%M")
-      output += ' | <' + 'http://ridetheclown.com/eveapi/audit.php?usid='
+      output += ' | <' + API_BASE_URL + '?usid='
       output += str(record['keyid'])+'&apik='+record['vcode'] + '|' 
       output += record['name'] + '> : ' 
       output += canfly
