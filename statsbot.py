@@ -60,7 +60,7 @@ def process_message(data):
 			logging.info('help command received from ' + username)
 			outputs.append([channel, "!sb lastkill || shows the lastkill reported in #kills\r\n"+
 						 "!sb events || list events on the WDS in-game calendar\r\n"+
-						 "!sb srp || view the current status of the WDS SRP wallet"+
+						 "!sb srp || view the current status of the WDS SRP wallet\r\n"+
 						 "!sb rr <your message here> || post a request for a fleet or forump message to #rapid-response"])
 		elif command.startswith("lastkill"):
 			logging.info('lastkill command received from ' + username)
