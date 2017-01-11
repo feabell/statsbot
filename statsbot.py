@@ -43,7 +43,7 @@ def process_message(data):
 	channel = data["channel"]
 	user = data["user"]
 	username = slackapi.getFullname(user)
-    	text = data["text"]
+    	text = data["text"].lower()
 	#print data
 
 	#if channel.startswith("D"): # or channel.startswith("C"):
