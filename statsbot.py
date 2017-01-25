@@ -24,6 +24,8 @@ crontable = []
 crontable.append([600, "autokill"])
 #poll for new recruits every 1minutes
 crontable.append([60, "autorec"])
+#poll for members approaching the end of their trial, every 24hours
+crontable.append([86400, "autotrial"])
 
 killChannelId = "C04MCGR8Y"
 testChannelId = "C04N5P17B"
@@ -129,8 +131,11 @@ def process_message(data):
 					#list invited
 					slackapi.sendToChannel(recruitment.list(rejected=True, showfull=showFull), channel)
 				elif targetcomm == "trial":
-					#list invited
+					#list trial users 
 					slackapi.sendToChannel(recruitment.list(trial=True), channel)
+				elif targetcomm == "endtrial":
+					#list trial users 
+					slackapi.sendToChannel(recruitment.list(endOfTrial=True), channel)
 			elif subcomm.startswith("induct"):
 				#mark selected recruits as inducted and needing an invite
 				recruitment.update(1, blob[3:], username)
@@ -205,6 +210,12 @@ def autorec():
 			cur.execute('update lastrecruitid set id = '+recIdInt)
 			con.commit()
 
+
+def autotrial():
+	logging.info("autotrial: polling for members nearing the end of their trial period")
+
+	slackapi.sendToChannel(recruitment.list(endOfTrial=True), recruitChannelId)
+	
 
 
 
