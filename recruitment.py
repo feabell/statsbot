@@ -9,7 +9,7 @@ config = yaml.load(file('plugins/stats/statsbot.conf', 'r'))
 api_base_url = config["API_BASE_URL"]
 
 
-def list(recruits=False, invited=False, inducted=False, rejected=False, showfull=False, recid=False):
+def list(recruits=False, invited=False, inducted=False, rejected=False, showfull=False, recid=False, trial=False):
 
   output = 'ID | Date Added | Pilot & Capability | Agent Last Edit & Date\r\n'
   
@@ -30,6 +30,17 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
                        'strat, recon, t3, blops, '
                        'lastagent, datelasttouch FROM recruits WHERE id=? '
                        , [recid])
+  elif trial:
+    now = datetime.datetime.now()
+    delta = datetime.timedelta(days=21)
+    weeksagotime = now - delta
+    weeksago = weeksagotime.strftime('%Y-%m-%d %H:%M:%S')
+
+    results = query_db('SELECT id, '
+                       'name, keyid, vcode, dateadded, sb, astero, '
+                       'strat, recon, t3, blops, '
+                       'lastagent, datelasttouch FROM recruits WHERE status=2 '
+                       'AND datelasttouch > ? ', [weeksago]) 
   else:
     results = query_db('SELECT id, '
                        'name, keyid, vcode, dateadded, blob, sb, astero, '
