@@ -26,10 +26,13 @@ crontable.append([600, "autokill"])
 crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
 crontable.append([86400, "autotrial"])
+#poll for new members in the last 24 hours
+crontable.append([86400, "autonew"])
 
 killChannelId = "C04MCGR8Y"
 testChannelId = "C04N5P17B"
 recruitChannelId = "G04NGUDHF"
+generalChannelId = "C04L6NKQ3"
 
 logging.info('Statsbot started')
 
@@ -216,6 +219,9 @@ def autotrial():
 
 	slackapi.sendToChannel(recruitment.list(endOfTrial=True), recruitChannelId)
 	
+def autonew():
+	logging.info("autonew: polling for new members in the last 24hours")
 
+	slackapi.sendToChannel(recruitment.newMembers(), generalChannelId)
 
 

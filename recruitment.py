@@ -100,6 +100,22 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
 
   return output
 
+def newMembers():
+    
+    dayago_t = datetime.datetime.now() - datetime.timedelta(days=1)
+    dayago = dayago_t.strftime('%Y-%m-%d %H:%M:%S')
+
+    results = query_db('SELECT name '
+                       'FROM recruits WHERE status=2 '
+                       'AND datelasttouch > ? ', [dayago]) 
+
+    pilots = list(results.fetchall())
+
+    output ='Please welcome the new agents who have joined in the last 24hours!\r\n'
+    output += ",".join(pilots)
+
+    return output    
+
 def update(param, users, agent):
   
   recruits = ''.join(users).split(',')
