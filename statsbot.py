@@ -222,6 +222,9 @@ def autotrial():
 def autonew():
 	logging.info("autonew: polling for new members in the last 24hours")
 
-	slackapi.sendToChannel(recruitment.newMembers(), generalChannelId)
+	new = recruitment.newMembers()
+
+	if new:
+	  slackapi.sendToChannel(new,generalChannelId)
 
 

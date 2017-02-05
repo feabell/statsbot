@@ -111,11 +111,14 @@ def newMembers():
 
     pilots = list(results.fetchall())
 
-    output ='Please welcome the new agents who have joined in the last 24hours!\r\n'
-    output += ",".join(pilots)
+    if len[pilots] > 0:
+      output ='Please welcome the new agents who have joined in the last 24hours!\r\n'
+      output += ",".join(pilots)
 
-    return output    
+      return output    
 
+    return false
+   
 def update(param, users, agent):
   
   recruits = ''.join(users).split(',')
