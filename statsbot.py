@@ -101,9 +101,11 @@ def process_message(data):
 
 			if subcomm == "help":
 				helptext = "!sb recruit list\r\n"
-				helptext+= "!sb recruit list <recruits|invited|inducted|rejected|trial> <full>\r\n" 
+				helptext+= "!sb recruit list <recruits|invited|inducted|rejected|trial|name> <full>\r\n" 
 				helptext+= "!sb recruit list <id> <full>\r\n"
+				helptext+= "!sb recruit list name <pilot full name> <full>\r\n"
 				helptext+= "!sb recruit <invite|induct|reject> <id>\r\n"
+
 				outputs.append([channel, helptext])
 				return
 
@@ -139,6 +141,9 @@ def process_message(data):
 				elif targetcomm == "endtrial":
 					#list trial users 
 					slackapi.sendToChannel(recruitment.list(endOfTrial=True), channel)
+				elif targetcomm == "name":
+					#list users by name
+					slackapi.sendToChannel(recruitment.list(findByName=True,showfull=showfull,searchString=blob[4:]))
 			elif subcomm.startswith("induct"):
 				#mark selected recruits as inducted and needing an invite
 				recruitment.update(1, blob[3:], username)

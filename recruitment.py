@@ -9,7 +9,7 @@ config = yaml.load(file('plugins/stats/statsbot.conf', 'r'))
 api_base_url = config["API_BASE_URL"]
 
 
-def list(recruits=False, invited=False, inducted=False, rejected=False, showfull=False, recid=False, trial=False, endOfTrial=False):
+def list(recruits=False, invited=False, inducted=False, rejected=False, showfull=False, recid=False, trial=False, endOfTrial=False,findByName=False,searchString = ''):
 
   output =''
   if endOfTrial:
@@ -55,7 +55,12 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
                        'strat, recon, t3, blops, '
                        'lastagent, datelasttouch FROM recruits WHERE status=2 '
                        'AND datelasttouch > ? AND datelasttouch < ?', [weeksago, weeksago2]) 
-
+  elif findByName:
+    results = query_db('SELECT id, '
+                       'name, keyid, vcode, dateadded, blob, sb, astero, '
+                       'strat, recon, t3, blops, '
+                       'lastagent, datelasttouch FROM recruits WHERE name="?" '
+                       , [searchString])
   else:
     results = query_db('SELECT id, '
                        'name, keyid, vcode, dateadded, blob, sb, astero, '
