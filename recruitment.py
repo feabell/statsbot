@@ -59,8 +59,8 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
     results = query_db('SELECT id, '
                        'name, keyid, vcode, dateadded, blob, sb, astero, '
                        'strat, recon, t3, blops, '
-                       'lastagent, datelasttouch FROM recruits WHERE name="?" '
-                       , [searchString])
+                       'lastagent, datelasttouch FROM recruits WHERE name like ? '
+                       , ['%'+searchString+'%'])
   else:
     results = query_db('SELECT id, '
                        'name, keyid, vcode, dateadded, blob, sb, astero, '
