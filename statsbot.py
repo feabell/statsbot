@@ -143,7 +143,7 @@ def process_message(data):
 					slackapi.sendToChannel(recruitment.list(endOfTrial=True), channel)
 				elif targetcomm == "name":
 					#list users by name
-					slackapi.sendToChannel(recruitment.list(findByName=True,showfull=showfull,searchString=blob[4:]))
+					slackapi.sendToChannel(recruitment.list(findByName=True,showfull=showfull,searchString=blob[4:]),channel)
 			elif subcomm.startswith("induct"):
 				#mark selected recruits as inducted and needing an invite
 				recruitment.update(1, blob[3:], username)
