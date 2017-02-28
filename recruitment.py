@@ -7,6 +7,7 @@ import yaml
 database = '/var/www/agentapi/agentapi.db'
 config = yaml.load(file('plugins/stats/statsbot.conf', 'r'))
 api_base_url = config["API_BASE_URL"]
+skills_base_url = config["SKILLS_BASE_URL"]
 
 
 def list(recruits=False, invited=False, inducted=False, rejected=False, showfull=False, recid=False, trial=False, endOfTrial=False,findByName=False,searchString = ''):
@@ -30,7 +31,7 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
   
   if recid:
     results = query_db('SELECT id, '
-                       'name, keyid, vcode, dateadded, blob, sb, astero, '
+                       'name, keyid, vcode, token, dateadded, blob, sb, astero, '
                        'strat, recon, t3, blops, '
                        'lastagent, datelasttouch FROM recruits WHERE id=? '
                        , [recid])
@@ -39,7 +40,7 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
     weeksago = weeksago_t.strftime('%Y-%m-%d %H:%M:%S')
 
     results = query_db('SELECT id, '
-                       'name, keyid, vcode, dateadded, sb, astero, '
+                       'name, keyid, vcode, token, dateadded, sb, astero, '
                        'strat, recon, t3, blops, '
                        'lastagent, datelasttouch FROM recruits WHERE status=2 '
                        'AND datelasttouch > ? ', [weeksago]) 
@@ -51,19 +52,19 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
     weeksago2 = weeksago2_t.strftime('%Y-%m-%d %H:%M:%S')
 
     results = query_db('SELECT id, '
-                       'name, keyid, vcode, dateadded, sb, astero, '
+                       'name, keyid, vcode, token, dateadded, sb, astero, '
                        'strat, recon, t3, blops, '
                        'lastagent, datelasttouch FROM recruits WHERE status=2 '
                        'AND datelasttouch > ? AND datelasttouch < ?', [weeksago, weeksago2]) 
   elif findByName:
     results = query_db('SELECT id, '
-                       'name, keyid, vcode, dateadded, blob, sb, astero, '
+                       'name, keyid, vcode, token, dateadded, blob, sb, astero, '
                        'strat, recon, t3, blops, '
                        'lastagent, datelasttouch FROM recruits WHERE name like ? '
                        , ['%'+searchString+'%'])
   else:
     results = query_db('SELECT id, '
-                       'name, keyid, vcode, dateadded, blob, sb, astero, '
+                       'name, keyid, vcode, token, dateadded, blob, sb, astero, '
                        'strat, recon, t3, blops, '
                        'lastagent, datelasttouch FROM recruits WHERE status=? '
                        'ORDER BY dateadded', [status])
@@ -90,8 +91,13 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
 
       output += '>' + str(record['id']).center(6) + '| ' 
       output +=  date.strftime("%d %b %H:%M")
-      output += ' | <' + api_base_url + '?usid='
-      output += str(record['keyid'])+'&apik='+record['vcode'] + '|' 
+
+      if record['token']:
+        output += ' | <' + skills_base_url + record['name'] + '|'
+      else:
+        output += ' | <' + api_base_url + '?usid='
+        output += str(record['keyid'])+'&apik='+record['vcode'] + '|' 
+
       output += record['name'] + '> : ' 
       output += canfly
       if record['lastagent']:
@@ -135,7 +141,7 @@ def update(param, users, agent):
 
 def getNew(recId):
   return query_db('SELECT id '
-                  'FROM recruits WHERE id>?'
+                  'FROM recruits WHERE id>? and blob != "INCOMPLETE APPLICATION"'
                        , [recId])
 
 def query_db(query, args=(), one=False):
