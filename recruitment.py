@@ -92,11 +92,11 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
       output += '>' + str(record['id']).center(6) + '| ' 
       output +=  date.strftime("%d %b %H:%M")
 
-      if record['token']:
-        output += ' | <' + skills_base_url + record['name'] + '|'
-      else:
-        output += ' | <' + api_base_url + '?usid='
-        output += str(record['keyid'])+'&apik='+record['vcode'] + '|' 
+      #if record['token']:
+      output += ' | <' + skills_base_url + record['name'] + '|'
+      #else:
+      #  output += ' | <' + api_base_url + '?usid='
+      #  output += str(record['keyid'])+'&apik='+record['vcode'] + '|' 
 
       output += record['name'] + '> : ' 
       output += canfly
