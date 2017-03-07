@@ -27,7 +27,7 @@ crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
 crontable.append([86400, "autotrial"])
 #poll for new members in the last 24 hours
-crontable.append([86400, "autonew"])
+#crontable.append([86400, "autonew"])
 
 killChannelId = "C04MCGR8Y"
 testChannelId = "C04N5P17B"
@@ -186,6 +186,14 @@ def autokill():
 		kills = zkbapi.getNewKills(lastKillId)
 
 		for kill in kills:
+			if kill == "error":
+				continue
+#			kill = kill.encode('utf-8')
+			logging.info(kill)
+			logging.info('1')
+#			logging.info(kill['killID'])
+			logging.info(type(kill))
+			logging.info('2')
 			killIdInt = str(kill['killID'])
 			outputs.append([killChannelId, zkbapi.parseKill(kill)])
 			logging.info("autokill: updating latest kill to " + killIdInt)
