@@ -141,7 +141,7 @@ def update(param, users, agent):
 
 def getNew(recId):
   return query_db('SELECT id '
-                  'FROM recruits WHERE id>? and status >=0"'
+                  'FROM recruits WHERE id>? and status >=0'
                        , [recId])
 
 def query_db(query, args=(), one=False):
