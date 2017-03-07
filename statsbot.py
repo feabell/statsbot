@@ -21,11 +21,11 @@ outputs = []
 crontable = []
 
 #poll for new kills every 10minutes
-crontable.append([600, "autokill"])
+#crontable.append([600, "autokill"])
 #poll for new recruits every 1minutes
 crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
-#crontable.append([86400, "autotrial"])
+crontable.append([86400, "autotrial"])
 #poll for new members in the last 24 hours
 #crontable.append([86400, "autonew"])
 
