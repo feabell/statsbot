@@ -25,7 +25,7 @@ crontable.append([600, "autokill"])
 #poll for new recruits every 1minutes
 crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
-crontable.append([86400, "autotrial"])
+#crontable.append([86400, "autotrial"])
 #poll for new members in the last 24 hours
 #crontable.append([86400, "autonew"])
 
@@ -146,16 +146,22 @@ def process_message(data):
 					slackapi.sendToChannel(recruitment.list(findByName=True,showfull=showFull,searchString=' '.join(blob[4:])),channel)
 			elif subcomm.startswith("induct"):
 				#mark selected recruits as inducted and needing an invite
-				recruitment.update(1, blob[3:], username)
-				slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as inducted by ' + username, recruitChannelId)
+				if recruitment.update(1, blob[3:], username):
+				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as inducted by ' + username, recruitChannelId)
+				else:
+				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3:]) + ' does not exist in the recruits database.', recruitChannelId)
 			elif subcomm.startswith("invite"):
 				#mark selected recruits as invited
-				recruitment.update(2, blob[3:], username)
-				slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as invited by ' + username, recruitChannelId)
+				if recruitment.update(2, blob[3:], username) > 0:
+				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as invited by ' + username, recruitChannelId)
+				else:
+				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3:]) + ' does not exist in the recruits database.', recruitChannelId)
 			elif subcomm.startswith("reject"):
 				#mark selected recruits as rejected
-				recruitment.update(3, blob[3:], username)
-				slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as rejected by ' + username, recruitChannelId)
+				if recruitment.update(3, blob[3:], username) > 0:
+				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as rejected by ' + username, recruitChannelId)
+				else:
+				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3:]) + ' does not exist in the recruits database.', recruitChannelId)
 			else:
 				outputs.append([channel, "Unknown command"])
 

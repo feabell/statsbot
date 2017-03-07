@@ -137,7 +137,7 @@ def update(param, users, agent):
                            'SET status=?, lastagent=?,  datelasttouch=datetime() '
                            'WHERE id=?', [param, agent, recruit])
 
-  return
+  return update
 
 def getNew(recId):
   return query_db('SELECT id '
@@ -176,7 +176,10 @@ def insert_db(query, args=()):
   """
   con = get_db()
   cur = con.execute(query, args)
+  rows_affected = cur.rowcount
   #print(query)
   #print(cur.rowcount)
   con.commit()
   cur.close()
+
+  return rows_affected
