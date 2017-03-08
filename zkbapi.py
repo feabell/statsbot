@@ -14,12 +14,11 @@ allianceId = "99006319"
 headers = {'user-agent': 'WiNGSPAN Slack webhook (all kill tracker 10min poll) feabell@gmail.com'}
 
 
-def getNewKills(ignore):
-
-# Don't need the arguement anymore, so we ignore it if it's passed
-
+def getNewKills():
 
 	global headers, allianceId
+
+	logging.getLogger("requests").setLevel(logging.WARNING)	
 
 	kill = ""
 	killmail = ""
@@ -124,11 +123,15 @@ def parseKill(killmail):
 
 	message = victim +"("+ corp +") lost their "+ ship +" worth "+ shipvalue +"m to "+ pilot +"(and "+ pilotcount + " others) in "+ system +" at "+ killtime +". "+ killurl 
 	
+	logging.info("Kill logged for " + killurl)
+	
 	return message
 
 
 # parse the kiallmail format as provided by zkillboard.com/api/kills
 def parseKillZkApi(kill):
+
+
 	killIdInt = kill['killID']
 	v = kill['victim']
 		

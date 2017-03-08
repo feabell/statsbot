@@ -20,8 +20,8 @@ api_client = slackapi.init(token)
 outputs = []
 crontable = []
 
-#poll for new kills every 10minutes
-#crontable.append([600, "autokill"])
+#poll for new kills every minute
+crontable.append([60, "autokill"])
 #poll for new recruits every 1minutes
 crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
@@ -179,37 +179,15 @@ def process_message(data):
 			slackapi.sendRR(message)
 
 def autokill():
-	logging.info("autokill: polling for new kills")
-	#grab the lastKillId from sqlite
-	dir_path = os.path.dirname(os.path.abspath(__file__))
-	con = sqlite3.connect(os.path.join(dir_path, 'statsbot.db'))
+	#logging.info("autokill: polling for new kills")
+	kills = zkbapi.getNewKills()
 
-	with con:
-		cur = con.cursor()
-		cur.execute('select id from lastkillid')
-
-		lastKillId = str(cur.fetchone()[0])
-		kills = zkbapi.getNewKills(lastKillId)
-
-		for kill in kills:
-			if kill == "error":
-				continue
-#			kill = kill.encode('utf-8')
-			logging.info(kill)
-			logging.info('1')
-#			logging.info(kill['killID'])
-			logging.info(type(kill))
-			logging.info('2')
-			killIdInt = str(kill['killID'])
-			outputs.append([killChannelId, zkbapi.parseKill(kill)])
-			logging.info("autokill: updating latest kill to " + killIdInt)
-
-			cur.execute('update lastkillid set id = '+killIdInt)
-			con.commit()
+	for kill in kills:
+		outputs.append([killChannelId, zkbapi.parseKill(kill)])
 
 
 def autorec():
-	logging.info("autorec: polling for new recruits")
+	#logging.info("autorec: polling for new recruits")
 	
 	dir_path = os.path.dirname(os.path.abspath(__file__))
 	con = sqlite3.connect(os.path.join(dir_path, 'statsbot.db'))
