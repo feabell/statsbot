@@ -125,9 +125,9 @@ def getSRP():
 
 	response += "SRP stats from " + start_date + " (last 30 days):\r\n"
 	response += "--------------------------------------------------\r\n"
-	response += "Starting balance: " + locale.format("%d", starting_balance/1000, grouping=True) + "mn/isk\r\n"
-	response += "Donations: " + locale.format("%d", donations/1000, grouping=True) + "mn/isk\r\n"
-	response += "Payouts: " + locale.format("%d", payouts/1000, grouping=True) + "mn/isk\r\n"
-	response += "Current balance: " + locale.format("%d", end_balance/1000, grouping=True) + "mn/isk\r\n"
+	response += "Starting balance: " + locale.format("%0.2f", starting_balance/1000000000, grouping=True) + "bn/isk\r\n"
+	response += "Donations: " + locale.format("%0.2f", donations/1000000000, grouping=True) + "bn/isk\r\n"
+	response += "Payouts: " + locale.format("%0.2f", payouts/1000000000, grouping=True) + "bn/isk\r\n"
+	response += "Current balance: " + locale.format("%0.2f", end_balance/1000000000, grouping=True) + "bn/isk\r\n"
 
 	return response
