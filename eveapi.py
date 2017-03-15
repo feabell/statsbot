@@ -124,10 +124,10 @@ def getSRP():
 		logging.info("barfed in XML api", sys.exc_info()[0])
 
 	response += "SRP stats from " + start_date + " (last 30 days):\r\n"
-	response += "--------------------------------------------------\r\n"
-	response += "Starting balance: " + locale.format("%0.2f", starting_balance/1000000000, grouping=True) + "bn/isk\r\n"
+	#response += "--------------------------------------------------\r\n"
+	response += "```Starting balance: " + locale.format("%0.2f", starting_balance/1000000000, grouping=True) + "bn/isk\r\n"
 	response += "Donations: " + locale.format("%0.2f", donations/1000000000, grouping=True) + "bn/isk\r\n"
 	response += "Payouts: " + locale.format("%0.2f", payouts/1000000000, grouping=True) + "bn/isk\r\n"
-	response += "Current balance: " + locale.format("%0.2f", end_balance/1000000000, grouping=True) + "bn/isk\r\n"
+	response += "Current balance: " + locale.format("%0.2f", end_balance/1000000000, grouping=True) + "bn/isk```"
 
 	return response
