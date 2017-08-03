@@ -81,7 +81,6 @@ def getEvents():
 	return response
 
 def getBookmarkCount():
-
 	apikey = getKey("BOOKMARKS")
 
 	data = apikey.split()
@@ -89,13 +88,14 @@ def getBookmarkCount():
 	corpvcode = data[1]
 
 	url = "https://api.eveonline.com/corp/Bookmarks.xml.aspx?keyid="+corpkey+"&vcode="+corpvcode
+	logging.info(url)
 
 	count = 0
 
 	try:
 		root = ET.fromstring(requests.get(url).content)
 
-		folders = root.iter('folderName')
+		folders = list(root.find("result").findall("rowset"))		
 
 		for folder in folders:
 		        for entry in folder:
@@ -116,28 +116,32 @@ def getBookmarkDetails():
 	corpvcode = data[1]
 
 	url = "https://api.eveonline.com/corp/Bookmarks.xml.aspx?keyid="+corpkey+"&vcode="+corpvcode
+	logging.info(url)
 
-	response = 'Bookmarks By Folder'
-	response+= '-------------------'
+	response = 'Bookmarks By Folder\r\n'
+	response+= '-------------------------\r\n```'
 
 	try:
 		root = ET.fromstring(requests.get(url).content)
 
-		folders = root.iter('folderName')
+		folders = list(root.find("result").findall("rowset"))
 
 		for folder in folders:
 		        for entry in folder:
-                	foldername = entry.get('folderName')
-	                bookmarks = list(entry.findall("rowset"))
+                		foldername = entry.get('folderName')
+				if not foldername:
+					foldername = "(top level)"
 
-	                for bookmark in bookmarks:
-        	                count = len(list(bookmark.findall("row")))
-				response+=foldername + " : " + count
+	                	bookmarks = list(entry.findall("rowset"))
+
+	                	for bookmark in bookmarks:
+        	                	count = len(list(bookmark.findall("row")))
+					response+= foldername + " : " + str(count)+"\r\n"
 
 	except:
 		logging.info("barfed in XML api", sys.exc_info()[0])
 
-
+	response +="```"
 	return response
 			
 def getSRP():

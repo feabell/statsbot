@@ -21,11 +21,11 @@ outputs = []
 crontable = []
 
 #poll for new kills every minute
-crontable.append([60, "autokill"])
+#crontable.append([60, "autokill"])
 #poll for new recruits every 1minutes
-crontable.append([60, "autorec"])
+#crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
-crontable.append([86400, "autotrial"])
+#crontable.append([86400, "autotrial"])
 #poll for full bookmarks, every 10 minutes
 crontable.append([600, "autobms"])
 #poll for new members in the last 24 hours
@@ -182,7 +182,7 @@ def process_message(data):
 			slackapi.sendRR(message)
 		elif command.startswith("bm"):
 			logging.info('bm command received from ' + username)
-			outputs.append([channel, slackapi.getBookmarkDetails()])
+			outputs.append([channel, eveapi.getBookmarkDetails()])
 
 def autokill():
 	#logging.info("autokill: polling for new kills")
@@ -230,10 +230,10 @@ def autonew():
 	if new:
 	  slackapi.sendToChannel(new,generalChannelId)
 
-def autobms()
+def autobms():
 	logging.info("autobms: checking bookmark levels")
 
-	count = slackapi.getBookmarkCount()
+	count = eveapi.getBookmarkCount()
 
 	if count > 450:
 		slackapi.sendToChannel("@here bookmarks approaching limit ("+count+"/500)", commsChannelId)
