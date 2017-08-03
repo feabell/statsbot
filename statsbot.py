@@ -21,11 +21,11 @@ outputs = []
 crontable = []
 
 #poll for new kills every minute
-#crontable.append([60, "autokill"])
+crontable.append([60, "autokill"])
 #poll for new recruits every 1minutes
-#crontable.append([60, "autorec"])
+crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
-#crontable.append([86400, "autotrial"])
+crontable.append([86400, "autotrial"])
 #poll for full bookmarks, every 10 minutes
 crontable.append([600, "autobms"])
 #poll for new members in the last 24 hours
@@ -235,6 +235,6 @@ def autobms():
 
 	count = eveapi.getBookmarkCount()
 
-	if count > 450:
+	if count > 475:
 		slackapi.sendToChannel("@here bookmarks approaching limit ("+count+"/500)", commsChannelId)
 
