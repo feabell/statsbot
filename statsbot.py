@@ -26,11 +26,14 @@ crontable.append([60, "autokill"])
 crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
 crontable.append([86400, "autotrial"])
+#poll for full bookmarks, every 10 minutes
+crontable.append([600, "autobms"])
 #poll for new members in the last 24 hours
 #crontable.append([86400, "autonew"])
 
 killChannelId = "C04MCGR8Y"
 testChannelId = "C04N5P17B"
+commsChannelId = "G6HD049T4"
 recruitChannelId = "G04NGUDHF"
 generalChannelId = "C04L6NKQ3"
 
@@ -169,7 +172,7 @@ def process_message(data):
 		elif command.startswith("rr"):
 			logging.info('rr command received from ' + username)
 			if not channel.startswith("D"):
-				slackapi.sendPM("You can't send rapid reponses from channels, try copying and pasting the message (starting '!sb rr...')  in here instead!",
+				slackapi.sendPM("You can't send rapid responses from channels, try copying and pasting the message (starting '!sb rr...')  in here instead!",
 						user)
 				return
 
@@ -177,6 +180,9 @@ def process_message(data):
 			rr = ' '.join(blob[2:])
 			message = 'Rapid Response by '+username+' at '+currtime+' (eve time):\r\n'+rr
 			slackapi.sendRR(message)
+		elif command.startswith("bm"):
+			logging.info('bm command received from ' + username)
+			outputs.append([channel, slackapi.getBookmarkDetails()])
 
 def autokill():
 	#logging.info("autokill: polling for new kills")
@@ -224,4 +230,11 @@ def autonew():
 	if new:
 	  slackapi.sendToChannel(new,generalChannelId)
 
+def autobms()
+	logging.info("autobms: checking bookmark levels")
+
+	count = slackapi.getBookmarkCount()
+
+	if count > 450:
+		slackapi.sendToChannel("@here bookmarks approaching limit ("+count+"/500)", commsChannelId)
 
