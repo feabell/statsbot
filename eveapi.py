@@ -79,6 +79,66 @@ def getEvents():
 		logging.info("barfed in XML api", sys.exc_info()[0])
 	
 	return response
+
+def getBookmarkCount():
+
+	apikey = getKey("BOOKMARKS")
+
+	data = apikey.split()
+	corpkey = data[0]
+	corpvcode = data[1]
+
+	url = "https://api.eveonline.com/corp/Bookmarks.xml.aspx?keyid="+corpkey+"&vcode="+corpvcode
+
+	count = 0
+
+	try:
+		root = ET.fromstring(requests.get(url).content)
+
+		folders = root.iter('folderName')
+
+		for folder in folders:
+		        for entry in folder:
+	                bookmarks = list(entry.findall("rowset"))
+
+	                for bookmark in bookmarks:
+        	                count + len(list(bookmark.findall("row")))
+	except:
+		logging.info("barfed in XML api", sys.exc_info()[0])
+
+	return count
+			
+def getBookmarkDetails():
+	apikey = getKey("BOOKMARKS")
+
+	data = apikey.split()
+	corpkey = data[0]
+	corpvcode = data[1]
+
+	url = "https://api.eveonline.com/corp/Bookmarks.xml.aspx?keyid="+corpkey+"&vcode="+corpvcode
+
+	response = 'Bookmarks By Folder'
+	response+= '-------------------'
+
+	try:
+		root = ET.fromstring(requests.get(url).content)
+
+		folders = root.iter('folderName')
+
+		for folder in folders:
+		        for entry in folder:
+                	foldername = entry.get('folderName')
+	                bookmarks = list(entry.findall("rowset"))
+
+	                for bookmark in bookmarks:
+        	                count = len(list(bookmark.findall("row")))
+				response+=foldername + " : " + count
+
+	except:
+		logging.info("barfed in XML api", sys.exc_info()[0])
+
+
+	return response
 			
 def getSRP():
 
