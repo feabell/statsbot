@@ -99,10 +99,10 @@ def getBookmarkCount():
 
 		for folder in folders:
 		        for entry in folder:
-	                bookmarks = list(entry.findall("rowset"))
+	                	bookmarks = list(entry.findall("rowset"))
 
-	                for bookmark in bookmarks:
-        	                count + len(list(bookmark.findall("row")))
+	                	for bookmark in bookmarks:
+        	                	count + len(list(bookmark.findall("row")))
 	except:
 		logging.info("barfed in XML api", sys.exc_info()[0])
 
