@@ -88,7 +88,7 @@ def getBookmarkCount():
 	corpvcode = data[1]
 
 	url = "https://api.eveonline.com/corp/Bookmarks.xml.aspx?keyid="+corpkey+"&vcode="+corpvcode
-	logging.info(url)
+	#logging.info(url)
 
 	count = 0
 
