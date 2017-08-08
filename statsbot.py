@@ -27,7 +27,7 @@ crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
 crontable.append([86400, "autotrial"])
 #poll for full bookmarks, every 10 minutes
-crontable.append([600, "autobms"])
+crontable.append([3600, "autobms"])
 #poll for new members in the last 24 hours
 #crontable.append([86400, "autonew"])
 
