@@ -237,5 +237,5 @@ def autobms():
 	#logging.info("count: " +str(count))
 
 	if count > 475:
-		slackapi.sendToChannel("<!channel> bookmarks approaching limit ("+count+"/500)", commsChannelId)
+		slackapi.sendToChannel("<!here> bookmarks approaching limit ("+count+"/500)", commsChannelId)
 
