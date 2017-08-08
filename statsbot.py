@@ -233,8 +233,9 @@ def autonew():
 def autobms():
 	logging.info("autobms: checking bookmark levels")
 
-	count = eveapi.getBookmarkCount()
+	count = str(eveapi.getBookmarkCount())
+	#logging.info("count: " +str(count))
 
 	if count > 475:
-		slackapi.sendToChannel("@here bookmarks approaching limit ("+count+"/500)", commsChannelId)
+		slackapi.sendToChannel("<!channel> bookmarks approaching limit ("+count+"/500)", commsChannelId)
 
