@@ -145,7 +145,6 @@ def getLastKill():
 	
 		logging.info("lastkill: responded for killid " + str(killidint))
 	except Exception as e:
-		print(e)
 		logging.info("could not connect to zkb")
 
 	return toSlack

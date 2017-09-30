@@ -46,7 +46,6 @@ def getCharacter(characterID):
 	except Exception as e:
 		logging.info("couldnt resolve with ESI (character name)")
 
-	print("a")
 	return name
 
 def getCorporation(corporationID):
