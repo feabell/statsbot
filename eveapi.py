@@ -26,26 +26,49 @@ def getKey(key):
     return apikey
 
 def getSystem(systemID):
-	url = "https://crest.eveonline.com/solarsystems/"+systemID+"/"
+	url = "https://esi.tech.ccp.is/latest/universe/systems/"+systemID+"/?datasource=tranquility&language=en-us"
 	
 	name = ''
 	try:
 		blob = json.loads(requests.get(url).text)
 		name = blob['name']
 	except:
-		logging.info("couldn't connect to crest (system)")
+		logging.info("couldn't connect to ESI (system)")
+
+	return name
+
+def getCharacter(characterID):
+	url = "https://esi.tech.ccp.is/latest/characters/names/?character_ids="+characterID+"&datasource=tranquility"
+	name = ''
+	try:
+		blob = json.loads(requests.get(url).text)[0]
+		name = blob['character_name']
+	except Exception as e:
+		logging.info("couldnt resolve with ESI (character name)")
+
+	print("a")
+	return name
+
+def getCorporation(corporationID):
+	url = "https://esi.tech.ccp.is/latest/corporations/"+corporationID+"/?datasource=tranquility"
+	name = ''
+	try:
+		blob = json.loads(requests.get(url).text)
+		name = blob['corporation_name']
+	except:
+		logging.info("couldnt resolve with ESI (corporation name)")
 
 	return name
 
 def getShip(shipID):
-	url = "https://crest.eveonline.com/inventory/types/"+shipID+"/"
+	url = "https://esi.tech.ccp.is/latest/universe/types/"+shipID+"/?datasource=tranquility&language=en-us"
 
 	name = ''
 	try:
 		blob = json.loads(requests.get(url).text)
 		name = blob['name']
 	except:
-		logging.info("couldn't connect to crest (ship)")
+		logging.info("couldn't resolve with ESI (ship)")
 
 	return name
 
