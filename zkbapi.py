@@ -49,7 +49,6 @@ def getNewKills():
 			break
 
 		killmail = pkg['package']
-		print(n)
 
 #		new kills available, but it appears that it's "None" 
 		if str(killmail) == "None":
@@ -81,7 +80,11 @@ def getNewKills():
 
 # Parse the killmail format as provided by redisq.zkillboard.com
 def parseKill(killmail):
-	kill = killmail['killmail']
+        if 'killmail' in killmail:
+		kill = killmail['killmail']
+	else:
+		kill = killmail
+
 	killIdInt = kill['killmail_id']
 	v = kill['victim']
 		
@@ -121,39 +124,6 @@ def parseKill(killmail):
 	return message
 
 
-# parse the kiallmail format as provided by zkillboard.com/api/kills
-def parseKillZkApi(kill):
-
-
-	killIdInt = kill['killID']
-	v = kill['victim']
-		
-	#grab the primary attacker as the pilot in the attackers array with the finalBlow attribute set
-	a = filter(checkFinalBlow,kill['attackers'])[0]
-		
-	#grab stuff from the kill json blob
-	#generic info
-	system = eveapi.getSystem(str(kill['solarSystemID']))
-	killurl = "https://zkillboard.com/kill/"+str(killIdInt)+"/"	
-	shipvalue = str(round(kill['zkb']['totalValue']/1000000, 2))
-	killtime = kill['killTime']
-	pilotcount = str(len(kill['attackers']) - 1)
-
-	#victim info
-	victim = v['characterName']
-	corp = v['corporationName']
-	alliance = v['allianceName']
-	ship = eveapi.getShip(str(v['shipTypeID']))
-		
-	#attacker info
-	pilot = a['characterName']
-
-	message = victim +"("+ corp +") lost their "+ ship +" worth "+ shipvalue +"m to "+ pilot +"(and "+ pilotcount + " others) in "+ system +" at "+ killtime +". "+ killurl 
-	
-	return message
-
-
-
 def getLastKill():
 	global toSlack
 	global killid
@@ -168,13 +138,14 @@ def getLastKill():
 		j = json.loads(requests.get(url, headers=headers).text)
 
 		blob = j[0]
-		killidint = blob['killID']
+		killidint = blob['killmail_id']
 		if (killidint > killid):
 			killid = killidint
-			toSlack = parseKillZkApi(blob)
+			toSlack = parseKill(blob)
 	
 		logging.info("lastkill: responded for killid " + str(killidint))
 	except Exception as e:
+		print(e)
 		logging.info("could not connect to zkb")
 
 	return toSlack
