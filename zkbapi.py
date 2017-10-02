@@ -60,7 +60,7 @@ def getNewKills():
 		attkrs = kill['attackers']
 		for atkr in attkrs:
 			if 'alliance_id' in atkr:
- 				if atkr['alliance_id'] == allianceId:
+ 				if str(atkr['alliance_id']) == allianceId:
 					data.append(killmail)
 					break
 
@@ -141,7 +141,8 @@ def getLastKill():
 		killidint = blob['killmail_id']
 		if (killidint > killid):
 			killid = killidint
-			toSlack = parseKill(blob)
+		
+		toSlack = parseKill(blob)
 	
 		logging.info("lastkill: responded for killid " + str(killidint))
 	except Exception as e:
