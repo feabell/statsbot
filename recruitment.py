@@ -33,7 +33,7 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
     results = query_db('SELECT id, '
                        'name, keyid, vcode, token, dateadded, blob, sb, astero, '
                        'strat, recon, t3, blops, '
-                       'lastagent, datelasttouch FROM recruits WHERE id=? '
+                       'lastagent, datelasttouch, notes FROM recruits WHERE id=? '
                        , [recid])
   elif trial:
     weeksago_t = datetime.datetime.now() - datetime.timedelta(days=21)
@@ -60,13 +60,13 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
     results = query_db('SELECT id, '
                        'name, keyid, vcode, token, dateadded, blob, sb, astero, '
                        'strat, recon, t3, blops, '
-                       'lastagent, datelasttouch FROM recruits WHERE name like ? '
+                       'lastagent, datelasttouch, notes FROM recruits WHERE name like ? '
                        , ['%'+searchString+'%'])
   else:
     results = query_db('SELECT id, '
                        'name, keyid, vcode, token, dateadded, blob, sb, astero, '
                        'strat, recon, t3, blops, '
-                       'lastagent, datelasttouch FROM recruits WHERE status=? '
+                       'lastagent, datelasttouch, notes FROM recruits WHERE status=? '
                        'ORDER BY dateadded', [status])
 
   for record in results:
@@ -105,7 +105,8 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
       if lastdate: 
          output += ' - '+ lastdate.strftime("%d %b %H:%M")
       if showfull:
-         output += ' ``` '+record['blob']+' ``` \r\n'
+         output += ' ``` '+record['blob']+' ```'
+         output += ' ``` '+record['notes']+' ``` \r\n'
       else:
          output +=' \r\n'
 
@@ -130,11 +131,13 @@ def newMembers():
    
 def update(param, recruit, agent, note=''):
   
-  results = query_db('SELECT note '
+  results = query_db('SELECT notes '
                      'FROM recruits WHERE id=?', [recruit])
 
   if len(results) == 1:
       dbnote = results[0]['notes']
+      if not dbnote:
+        dbnote=''
   else:
       return False
 
@@ -150,12 +153,12 @@ def update(param, recruit, agent, note=''):
     upd_type = 'Other'
 
   dbnote += '==== ' +upd_type+ ' update by ' +agent+ ' at ' +currtime+ ' ====\r\n'
-  dbnote += note
+  dbnote += ' '.join(note)
   dbnote +='\r\n'
 
   update = insert_db('UPDATE recruits '
                      'SET status=?, lastagent=?, datelasttouch=datetime(), '
-                     'note=? '
+                     'notes=? '
                      'WHERE id=?', [param, agent, dbnote, recruit])
 
   return update
