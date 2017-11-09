@@ -105,8 +105,8 @@ def list(recruits=False, invited=False, inducted=False, rejected=False, showfull
       if lastdate: 
          output += ' - '+ lastdate.strftime("%d %b %H:%M")
       if showfull:
-         output += ' ``` '+record['blob']+' ```'
-         output += ' ``` '+record['notes']+' ``` \r\n'
+         output += ' ```'+record['blob']+'```'
+         output += ' ```'+record['notes']+'``` \r\n'
       else:
          output +=' \r\n'
 
