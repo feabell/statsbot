@@ -1,4 +1,6 @@
 /statsbot.conf
 /eveapi.conf
 /statsbot.db
-
+*.pyc
+*.old
+*.dnr
