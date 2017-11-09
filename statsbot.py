@@ -107,7 +107,7 @@ def process_message(data):
 				helptext+= "!sb recruit list <recruits|invited|inducted|rejected|trial|name> <full>\r\n" 
 				helptext+= "!sb recruit list <id> <full>\r\n"
 				helptext+= "!sb recruit list name <pilot full name> <full>\r\n"
-				helptext+= "!sb recruit <invite|induct|reject> <id>\r\n"
+				helptext+= "!sb recruit <invite|induct|reject> <id> <reason>\r\n"
 
 				outputs.append([channel, helptext])
 				return
@@ -149,22 +149,22 @@ def process_message(data):
 					slackapi.sendToChannel(recruitment.list(findByName=True,showfull=showFull,searchString=' '.join(blob[4:])),channel)
 			elif subcomm.startswith("induct"):
 				#mark selected recruits as inducted and needing an invite
-				if recruitment.update(1, blob[3:], username):
-				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as inducted by ' + username, recruitChannelId)
+				if recruitment.update(1, blob[3], username, blob[4:]):
+				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3]) +' marked as inducted by ' + username, recruitChannelId)
 				else:
-				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3:]) + ' does not exist in the recruits database.', recruitChannelId)
+				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3]) + ' does not exist in the recruits database.', recruitChannelId)
 			elif subcomm.startswith("invite"):
 				#mark selected recruits as invited
-				if recruitment.update(2, blob[3:], username) > 0:
-				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as invited by ' + username, recruitChannelId)
+				if recruitment.update(2, blob[3], username, blob[4:]):
+				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3]) +' marked as invited by ' + username, recruitChannelId)
 				else:
-				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3:]) + ' does not exist in the recruits database.', recruitChannelId)
+				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3]) + ' does not exist in the recruits database.', recruitChannelId)
 			elif subcomm.startswith("reject"):
 				#mark selected recruits as rejected
-				if recruitment.update(3, blob[3:], username) > 0:
-				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3:]) +' marked as rejected by ' + username, recruitChannelId)
+				if recruitment.update(3, blob[3], username, blob[4:]):
+				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3]) +' marked as rejected by ' + username, recruitChannelId)
 				else:
-				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3:]) + ' does not exist in the recruits database.', recruitChannelId)
+				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3]) + ' does not exist in the recruits database.', recruitChannelId)
 			else:
 				outputs.append([channel, "Unknown command"])
 

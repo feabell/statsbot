@@ -128,14 +128,35 @@ def newMembers():
 
     return False
    
-def update(param, users, agent):
+def update(param, recruit, agent, note=''):
   
-  recruits = ''.join(users).split(',')
+  results = query_db('SELECT note '
+                     'FROM recruits WHERE id=?', [recruit])
 
-  for recruit in recruits:
-	update = insert_db('UPDATE recruits '
-                           'SET status=?, lastagent=?,  datelasttouch=datetime() '
-                           'WHERE id=?', [param, agent, recruit])
+  if len(results) == 1:
+      dbnote = results[0]['notes']
+  else:
+      return False
+
+  currtime = strftime('%H:%M %d-%m', gmtime()) 
+
+  if param == 1:
+    upd_type = 'Induction'
+  elif param == 2:
+    upd_type = 'Invite'
+  elif param == 3: 
+    upd_type = 'Rejection'
+  else:
+    upd_type = 'Other'
+
+  dbnote += '==== ' +upd_type+ ' update by ' +agent+ ' at ' +currtime+ ' ====\r\n'
+  dbnote += note
+  dbnote +='\r\n'
+
+  update = insert_db('UPDATE recruits '
+                     'SET status=?, lastagent=?, datelasttouch=datetime(), '
+                     'note=? '
+                     'WHERE id=?', [param, agent, dbnote, recruit])
 
   return update
 
