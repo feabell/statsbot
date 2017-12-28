@@ -53,7 +53,7 @@ def getCorporation(corporationID):
 	name = ''
 	try:
 		blob = json.loads(requests.get(url).text)
-		name = blob['corporation_name']
+		name = blob['name']
 	except:
 		logging.info("couldnt resolve with ESI (corporation name)")
 
