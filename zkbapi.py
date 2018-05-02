@@ -129,8 +129,7 @@ def getLastKill():
 	global killid
 	global headers
 
-	rnd = str(randint(0,9)) 
-	url = 'https://zkillboard.com/api/kills/alliance/' + allianceId + '/limit/'+rnd+'/no-items/'
+	url = 'https://zkillboard.com/api/kills/alliance/' + allianceId + '/no-items/'
 
 	toSlack = ''
 	
