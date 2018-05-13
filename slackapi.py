@@ -10,29 +10,27 @@ def init(token):
     return api_client
 
 def getFullname(userid):
-	return  json.loads(api_client.api_call('users.info', user=userid))['user']['profile']['real_name']
+    return api_client.api_call('users.info', user=userid).get('user').get('profile').get('real_name')
 
 def getUsername(userid):
-	return  json.loads(api_client.api_call('users.info', user=userid))['user']['name']
+    return  api_client.api_call('users.info', user=userid).get('user').get('name')
 
 def sendRR(input):
-	api_client.api_call('chat.postMessage', channel='#rapid-response', text=input, as_user=True)
+    api_client.api_call('chat.postMessage', channel='#rapid-response', text=input, as_user=True)
 
 def sendPM(input, userid):
-	api_client.api_call('chat.postMessage', channel="@"+getUsername(userid), text=input, as_user=True)
+    api_client.api_call('chat.postMessage', channel="@"+getUsername(userid), text=input, as_user=True)
 
 def sendToChannel(input, channel):
-	api_client.api_call('chat.postMessage', channel=channel, text=input, as_user=True)
+    api_client.api_call('chat.postMessage', channel=channel, text=input, as_user=True)
 
 def sendMessage():
-	api_client.api_call('chat.postMessage', channel='#Testing', text='<http://google.com|test>', as_user=True)
+    api_client.api_call('chat.postMessage', channel='#Testing', text='<http://google.com|test>', as_user=True)
 
 def userInChannel(channel, user):
-	channelInfo = json.loads(api_client.api_call('groups.info', channel=channel))
+    channelInfo = api_client.api_call('groups.info', channel=channel)
 
-	if user in channelInfo['group']['members']:
-		return True
+    if user in channelInfo['group']['members']:
+        return True
 
-	return False
-	
-	
+    return False

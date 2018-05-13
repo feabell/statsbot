@@ -10,7 +10,7 @@ import os
 import logging
 from time import gmtime, strftime
 
-config = yaml.load(file('plugins/stats/statsbot.conf', 'r'))
+config = yaml.load(open('plugins/stats/statsbot.conf', 'r'))
 token = config["SLACK_TOKEN"]
 
 api_client = slackapi.init(token)
@@ -21,7 +21,7 @@ outputs = []
 crontable = []
 
 #poll for new kills every minute
-crontable.append([60, "autokill"])
+#crontable.append([60, "autokill"])
 #poll for new recruits every 1minutes
 crontable.append([60, "autorec"])
 #poll for members approaching the end of their trial, every 24hours
@@ -36,206 +36,222 @@ testChannelId = "C04N5P17B"
 commsChannelId = "G6HD049T4"
 recruitChannelId = "G04NGUDHF"
 generalChannelId = "C04L6NKQ3"
+adminChannelId = "GAN5WV672"
 
 logging.info('Statsbot started')
 
 def process_message(data):
-	#stop the bot from barfing out for events without a text, channel  or user chunk (event_ts chunks happen with unfurled links)
-	if not 'text' in data:
-		return
-	if not 'user' in data:
-		return
-	if not 'channel' in data:
-		return
+    #stop the bot from barfing out for events without a text, channel  or user chunk (event_ts chunks happen with unfurled links)
+    if not 'text' in data:
+        return
+    if not 'user' in data:
+        return
+    if not 'channel' in data:
+        return
 
-	channel = data["channel"]
-	user = data["user"]
-	username = slackapi.getFullname(user)
-    	text = data["text"].lower()
-	#print data
+    channel = data["channel"]
+    user = data["user"]
+    username = slackapi.getFullname(user)
+    text = data["text"].lower()
+    unmodified_text = data["text"]
+    #print data
 
-	#if channel.startswith("D"): # or channel.startswith("C"):
-	if text.startswith("!sb") or text.startswith("!statsbot"):
-		blob = text.split()
+    #if channel.startswith("D"): # or channel.startswith("C"):
+    if text.startswith("!sb") or text.startswith("!statsbot"):
+        blob = text.split()
+        unmodified_blob = unmodified_text.split()
 
-		if len(blob) < 2:
-			outputs.append([channel, "Not enough arguments supplied, type !sb help to see a list of commands."])		
-			return
+        if len(blob) < 2:
+            outputs.append([channel, "Not enough arguments supplied, type !sb help to see a list of commands."])
+            return
 
-		command = blob[1]
-		
-		if command.startswith("help"):
-			logging.info('help command received from ' + username)
-			outputs.append([channel, "!sb lastkill || shows the lastkill reported in #kills\r\n"+
-						 "!sb events || list events on the WDS in-game calendar\r\n"+
-						 "!sb srp || view the current status of the WDS SRP wallet\r\n"+
-						 "!sb rr <your message here> || post a request for a fleet or forump message to #rapid-response"])
-		elif command.startswith("lastkill"):
-			logging.info('lastkill command received from ' + username)
-			outputs.append([channel, zkbapi.getLastKill()])	
-		elif command.startswith("events"):
-			logging.info('events command received from ' + username)
-			outputs.append([channel, eveapi.getEvents()])	
-		elif command.startswith("srp"):
-			logging.info('srp command received from ' + username)
-			outputs.append([channel, eveapi.getSRP()])	
-		elif command.startswith("fleet"):
-			logging.info('fleet command received from ' + username)
-			if not channel.startswith("D"):
-				outputs.append([channel, "This command cannot be ran in this channel"])
-				return
+        command = blob[1]
 
-			subcomm = blob[2]
-			if subcomm.startswith("new"):
-				#grab the description by compounding together all entries after 2
-				description = ' '.join(blob[3:])
-				outputs.append([channel, fleetapi.newFleet(username, description)])	
-		elif command.startswith("testme"):
-			logging.info('testme v2 command received from ' + username)
-			#slackapi.sendMessage()
-			#slackapi.sendPM("did this work?", user)
-		elif command.startswith("recruit"):
-			logging.info('recruit command received from ' + username)
-			if not (channel.startswith(recruitChannelId) or slackapi.userInChannel(recruitChannelId, user)):
-				outputs.append([channel, "This command cannot be ran in this channel"])
-				return
+        if command.startswith("help"):
+            logging.info('help command received from ' + username)
+            outputs.append([channel, "!sb lastkill || shows the lastkill reported in #kills\r\n"+
+                                     "!sb events || list events on the WDS in-game calendar\r\n"+
+                                     "!sb srp || view the current status of the WDS SRP wallet\r\n"+
+                                     "!sb rr <your message here> || post a request for a fleet or forump message to #rapid-response"])
+        elif command.startswith("lastkill"):
+            logging.info('lastkill command received from ' + username)
+            outputs.append([channel, zkbapi.getLastKill()])
+        elif command.startswith("events"):
+            logging.info('events command received from ' + username)
+            outputs.append([channel, eveapi.getEvents()])
+        elif command.startswith("srp"):
+            logging.info('srp command received from ' + username)
+            outputs.append([channel, eveapi.getSRP()])
+        elif command.startswith("fleet"):
+            logging.info('fleet command received from ' + username)
+            if not channel.startswith("D"):
+                outputs.append([channel, "This command cannot be ran in this channel"])
+                return
 
-			subcomm = blob[2]
+            subcomm = blob[2]
+            if subcomm.startswith("new"):
+                #grab the description by compounding together all entries after 2
+                description = ' '.join(blob[3:])
+                outputs.append([channel, fleetapi.newFleet(username, description)])
+        elif command.startswith("testme"):
+            logging.info('testme v2 command received from ' + username)
+            #slackapi.sendMessage()
+            #slackapi.sendPM("did this work?", user)
+        elif command.startswith("admin"):
+            logging.info('admin command received from ' + username)
+            if not (channel.startswith(adminChannelId) or slackapi.userInChannel(adminChannelId, user)):
+                outputs.append([channel, "This command cannot be ran in this channel"])
+                return
+            subcomm = blob[2]
 
-			if subcomm == "help":
-				helptext = "!sb recruit list\r\n"
-				helptext+= "!sb recruit list <recruits|invited|inducted|rejected|trial|name> <full>\r\n" 
-				helptext+= "!sb recruit list <id> <full>\r\n"
-				helptext+= "!sb recruit list name <pilot full name> <full>\r\n"
-				helptext+= "!sb recruit <invite|induct|reject> <id> <reason>\r\n"
+            if subcomm == "auth":
 
-				outputs.append([channel, helptext])
-				return
+                #code provided
+                if len(blob) >=4:
+                   slackapi.sendToChannel(eveapi.end_auth(unmodified_blob[3]), channel)
+                else:
+                   slackapi.sendToChannel(eveapi.start_auth(), channel)
+        elif command.startswith("recruit"):
+            logging.info('recruit command received from ' + username)
+            if not (channel.startswith(recruitChannelId) or slackapi.userInChannel(recruitChannelId, user)):
+                outputs.append([channel, "This command cannot be ran in this channel"])
+                return
 
-			if subcomm == "list":
-				if len(blob) == 3:
-					targetcomm = "recruits"
-				else:
-					targetcomm = blob[3]
+            subcomm = blob[2]
 
-				showFull=False
+            if subcomm == "help":
+                helptext = "!sb recruit list\r\n"
+                helptext+= "!sb recruit list <recruits|invited|inducted|rejected|trial|name> <full>\r\n"
+                helptext+= "!sb recruit list <id> <full>\r\n"
+                helptext+= "!sb recruit list name <pilot full name> <full>\r\n"
+                helptext+= "!sb recruit <invite|induct|reject> <id> <reason>\r\n"
 
-				if len(blob) >= 5: 
-				  if blob[4] == "full":
-					showFull=True
-				if targetcomm.isdigit():
-					#list a specific recruit
-					slackapi.sendToChannel(recruitment.list(recid=targetcomm, showfull=showFull), channel)
-				elif targetcomm == "recruits":
-					#list all waiting recruits
-					slackapi.sendToChannel(recruitment.list(recruits=True, showfull=showFull), channel)
-				elif targetcomm == "invited":
-					#list invited
-					slackapi.sendToChannel(recruitment.list(invited=True, showfull=showFull), channel)
-				elif targetcomm == "inducted":
-					#list invited
-					slackapi.sendToChannel(recruitment.list(inducted=True,  showfull=showFull), channel)
-				elif targetcomm == "rejected":
-					#list invited
-					slackapi.sendToChannel(recruitment.list(rejected=True, showfull=showFull), channel)
-				elif targetcomm == "trial":
-					#list trial users 
-					slackapi.sendToChannel(recruitment.list(trial=True), channel)
-				elif targetcomm == "endtrial":
-					#list trial users 
-					slackapi.sendToChannel(recruitment.list(endOfTrial=True), channel)
-				elif targetcomm == "name":
-					#list users by name
-					slackapi.sendToChannel(recruitment.list(findByName=True,showfull=showFull,searchString=' '.join(blob[4:])),channel)
-			elif subcomm.startswith("induct"):
-				#mark selected recruits as inducted and needing an invite
-				if recruitment.update(1, blob[3], username, blob[4:]):
-				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3]) +' marked as inducted by ' + username, recruitChannelId)
-				else:
-				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3]) + ' does not exist in the recruits database.', recruitChannelId)
-			elif subcomm.startswith("invite"):
-				#mark selected recruits as invited
-				if recruitment.update(2, blob[3], username, blob[4:]):
-				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3]) +' marked as invited by ' + username, recruitChannelId)
-				else:
-				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3]) + ' does not exist in the recruits database.', recruitChannelId)
-			elif subcomm.startswith("reject"):
-				#mark selected recruits as rejected
-				if recruitment.update(3, blob[3], username, blob[4:]):
-				  slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3]) +' marked as rejected by ' + username, recruitChannelId)
-				else:
-				  slackapi.sendToChannel('Pilot ' + ''.join(blob[3]) + ' does not exist in the recruits database.', recruitChannelId)
-			else:
-				outputs.append([channel, "Unknown command"])
+                outputs.append([channel, helptext])
+                return
+
+            if subcomm == "list":
+                if len(blob) == 3:
+                    targetcomm = "recruits"
+                else:
+                    targetcomm = blob[3]
+
+                showFull=False
+
+                if len(blob) >= 5:
+                    if blob[4] == "full":
+                        showFull=True
+                if targetcomm.isdigit():
+                        #list a specific recruit
+                    slackapi.sendToChannel(recruitment.list(recid=targetcomm, showfull=showFull), channel)
+                elif targetcomm == "recruits":
+                    #list all waiting recruits
+                    slackapi.sendToChannel(recruitment.list(recruits=True, showfull=showFull), channel)
+                elif targetcomm == "invited":
+                    #list invited
+                    slackapi.sendToChannel(recruitment.list(invited=True, showfull=showFull), channel)
+                elif targetcomm == "inducted":
+                    #list invited
+                    slackapi.sendToChannel(recruitment.list(inducted=True,  showfull=showFull), channel)
+                elif targetcomm == "rejected":
+                    #list invited
+                    slackapi.sendToChannel(recruitment.list(rejected=True, showfull=showFull), channel)
+                elif targetcomm == "trial":
+                    #list trial users
+                    slackapi.sendToChannel(recruitment.list(trial=True), channel)
+                elif targetcomm == "endtrial":
+                    #list trial users
+                    slackapi.sendToChannel(recruitment.list(endOfTrial=True), channel)
+                elif targetcomm == "name":
+                    #list users by name
+                    slackapi.sendToChannel(recruitment.list(findByName=True,showfull=showFull,searchString=' '.join(blob[4:])),channel)
+            elif subcomm.startswith("induct"):
+                #mark selected recruits as inducted and needing an invite
+                if recruitment.update(1, blob[3], username, blob[4:]):
+                    slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3]) +' marked as inducted by ' + username, recruitChannelId)
+                else:
+                    slackapi.sendToChannel('Pilot ' + ''.join(blob[3]) + ' does not exist in the recruits database.', recruitChannelId)
+            elif subcomm.startswith("invite"):
+                #mark selected recruits as invited
+                if recruitment.update(2, blob[3], username, blob[4:]):
+                    slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3]) +' marked as invited by ' + username, recruitChannelId)
+                else:
+                    slackapi.sendToChannel('Pilot ' + ''.join(blob[3]) + ' does not exist in the recruits database.', recruitChannelId)
+            elif subcomm.startswith("reject"):
+                #mark selected recruits as rejected
+                if recruitment.update(3, blob[3], username, blob[4:]):
+                    slackapi.sendToChannel('Recruit(s) '+ ''.join(blob[3]) +' marked as rejected by ' + username, recruitChannelId)
+                else:
+                    slackapi.sendToChannel('Pilot ' + ''.join(blob[3]) + ' does not exist in the recruits database.', recruitChannelId)
+            else:
+                outputs.append([channel, "Unknown command"])
 
 
-		elif command.startswith("rr"):
-			logging.info('rr command received from ' + username)
-			if not channel.startswith("D"):
-				slackapi.sendPM("You can't send rapid responses from channels, try copying and pasting the message (starting '!sb rr...')  in here instead!",
-						user)
-				return
+        elif command.startswith("rr"):
+            logging.info('rr command received from ' + username)
+            if not channel.startswith("D"):
+                slackapi.sendPM("You can't send rapid responses from channels, try copying and pasting the message (starting '!sb rr...')  in here instead!",
+                                user)
+                return
 
-			currtime = strftime('%H:%M %d-%m', gmtime())
-			rr = ' '.join(blob[2:])
-			message = 'Rapid Response by '+username+' at '+currtime+' (eve time):\r\n'+rr
-			slackapi.sendRR(message)
-		elif command.startswith("bm"):
-			logging.info('bm command received from ' + username)
-			outputs.append([channel, eveapi.getBookmarkDetails()])
+            currtime = strftime('%H:%M %d-%m', gmtime())
+            rr = ' '.join(blob[2:])
+            message = 'Rapid Response by '+username+' at '+currtime+' (eve time):\r\n'+rr
+            slackapi.sendRR(message)
+        elif command.startswith("bm"):
+            logging.info('bm command received from ' + username)
+            outputs.append([channel, eveapi.getBookmarkCount()])
 
 def autokill():
-	#logging.info("autokill: polling for new kills")
-	kills = zkbapi.getNewKills()
+    #logging.info("autokill: polling for new kills")
+    kills = zkbapi.getNewKills()
 
-	for kill in kills:
-		outputs.append([killChannelId, zkbapi.parseKill(kill)])
+    for kill in kills:
+        outputs.append([killChannelId, zkbapi.parseKill(kill)])
 
 
 def autorec():
-	#logging.info("autorec: polling for new recruits")
-	
-	dir_path = os.path.dirname(os.path.abspath(__file__))
-	con = sqlite3.connect(os.path.join(dir_path, 'statsbot.db'))
+    #logging.info("autorec: polling for new recruits")
 
-	with con:
-		cur = con.cursor()
-		cur.execute('select id from lastrecruitid')
+    dir_path = os.path.dirname(os.path.abspath(__file__))
+    con = sqlite3.connect(os.path.join(dir_path, 'statsbot.db'))
 
-		lastRecId = str(cur.fetchone()[0])
-		recruits = recruitment.getNew(lastRecId)
+    with con:
+        cur = con.cursor()
+        cur.execute('select id from lastrecruitid')
 
-		if len(recruits) >=1:
-  		  slackapi.sendToChannel("New recruits!", recruitChannelId)
+        lastRecId = str(cur.fetchone()[0])
+        recruits = recruitment.getNew(lastRecId)
 
-		  for recruit in recruits:
-			recIdInt = str(recruit['id'])
-			slackapi.sendToChannel(recruitment.list(recid=recIdInt), recruitChannelId)
-			logging.info("autorec: updating latest recruit to " + recIdInt)
+        if len(recruits) >=1:
+            slackapi.sendToChannel("New recruits!", recruitChannelId)
 
-			cur.execute('update lastrecruitid set id = '+recIdInt)
-			con.commit()
+            for recruit in recruits:
+                recIdInt = str(recruit['id'])
+                slackapi.sendToChannel(recruitment.list(recid=recIdInt), recruitChannelId)
+                logging.info("autorec: updating latest recruit to " + recIdInt)
+
+                cur.execute('update lastrecruitid set id = '+recIdInt)
+                con.commit()
 
 
 def autotrial():
-	logging.info("autotrial: polling for members nearing the end of their trial period")
+    logging.info("autotrial: polling for members nearing the end of their trial period")
 
-	slackapi.sendToChannel(recruitment.list(endOfTrial=True), recruitChannelId)
-	
+    slackapi.sendToChannel(recruitment.list(endOfTrial=True), recruitChannelId)
+
 def autonew():
-	logging.info("autonew: polling for new members in the last 24hours")
+    logging.info("autonew: polling for new members in the last 24hours")
 
-	new = recruitment.newMembers()
+    new = recruitment.newMembers()
 
-	if new:
-	  slackapi.sendToChannel(new,generalChannelId)
+    if new:
+        slackapi.sendToChannel(new,generalChannelId)
 
 def autobms():
-	logging.info("autobms: checking bookmark levels")
+    logging.info("autobms: checking bookmark levels")
 
-	count = eveapi.getBookmarkCount()
-	#logging.info("count: " +str(count))
+    count = eveapi.getBookmarkCount()
+    #logging.info("count: " +str(count))
 
-	if count > 475:
-		slackapi.sendToChannel("<!here> bookmarks approaching limit ("+str(count)+"/500)", commsChannelId)
-
+    if count > 475:
+        slackapi.sendToChannel("<!here> bookmarks approaching limit ("+str(count)+"/500)", commsChannelId)
