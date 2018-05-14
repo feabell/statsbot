@@ -199,7 +199,7 @@ def process_message(data):
             slackapi.sendRR(message)
         elif command.startswith("bm"):
             logging.info('bm command received from ' + username)
-            outputs.append([channel, eveapi.getBookmarkCount()])
+            outputs.append([channel, "Current bookmark count:" +str( eveapi.getBookmarkCount() )])
 
 def autokill():
     #logging.info("autokill: polling for new kills")
